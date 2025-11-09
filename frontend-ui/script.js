@@ -1,5 +1,5 @@
 // IMPORTANT: Replace this with your actual API Gateway deployment endpoint
-const API_BASE_URL = "https://YOUR_API_GATEWAY_INVOKE_URL"; 
+const API_BASE_URL = "https://bzuy2i25364mwc4ofjplznf6ou.apigateway.us-ashburn-1.oci.customer-oci.com/api"; 
 
 const triggerBtn = document.getElementById('trigger-run-btn');
 const refreshBtn = document.getElementById('refresh-btn');
