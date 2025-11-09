@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Analysis Reports</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Analysis Reports</h1>
+        
+        <div class="controls">
+            <button id="trigger-run-btn">Manually Generate New Report</button>
+            <button id="refresh-btn">Refresh List</button>
+        </div>
+
+        <div id="status-message"></div>
+
+        <h2>Available Reports</h2>
+        <div id="file-list-container">
+            <div id="loader" class="hidden"></div>
+            <ul id="file-list">
+                <!-- File list will be populated here by JavaScript -->
+            </ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

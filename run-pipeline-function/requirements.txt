@@ -1,0 +1,9 @@
+fdk
+oci
+pandas
+yfinance
+finvizfinance
+tqdm
+fpdf2
+mplfinance
+matplotlib
