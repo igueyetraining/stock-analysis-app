@@ -6,4 +6,4 @@ build_image: fnproject/python:3.9-dev
 run_image: fnproject/python:3.9
 entrypoint: /python/bin/fdk /function/find_best_stair_and_ch_patterns.py handler
 memory: 2048
-timeout: 600
+timeout: 300
