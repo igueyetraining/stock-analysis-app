@@ -31,6 +31,7 @@ import time
 import argparse
 import sys
 import os
+os.environ['MPLCONFIGDIR'] = '/tmp/matplotlib'
 import random
 from datetime import datetime, timedelta
 from io import BytesIO
@@ -49,6 +50,18 @@ try:
     matplotlib.use('Agg') # Use a non-interactive backend for server-side execution
     import matplotlib.pyplot as plt
     import matplotlib.font_manager as fm
+    # --- START OF LOGGING FIX ---
+    # Silence the verbose DEBUG messages from matplotlib's font manager
+    import logging
+    matplotlib_logger = logging.getLogger('matplotlib')
+    matplotlib_logger.setLevel(logging.WARNING)
+    # Configure yfinance logger
+    yfinance_logger = logging.getLogger('yfinance')
+    yfinance_logger.setLevel(logging.WARNING)
+    # Configure Pillow (PIL) logger
+    pil_logger = logging.getLogger('PIL')
+    pil_logger.setLevel(logging.WARNING)
+    # --- END OF LOGGING FIX ---
 except ImportError:
     print("Error: Required libraries for PDF generation and charting not found.")
     print("Please run: pip install pandas fpdf2 mplfinance matplotlib yfinance finvizfinance tqdm")
@@ -863,11 +876,26 @@ def generate_pdf_report(categories, patterns_dict, full_df, scan_date):
     print("\n" + "="*80); print("--- [3C] GENERATING FINAL PDF REPORT ---"); print("="*80)
     pdf_filename = f"stock_analysis_report_{scan_date.strftime('%Y%m%d')}_{datetime.now().strftime('%H%M%S')}_{random.randint(100000, 999999)}.pdf"
     pdf = FPDF()
+  
+    # --- [FONT FIX FOR SERVERLESS] ---
     try:
-        pdf.add_font("DejaVu", "", fm.findfont(fm.FontProperties(family="DejaVu Sans")))
-        pdf.add_font("DejaVu", "B", fm.findfont(fm.FontProperties(family="DejaVu Sans", weight="bold")))
+       # Construct the path to the font file relative to the script's location
+       script_dir = os.path.dirname(os.path.abspath(__file__))
+       font_regular_path = os.path.join(script_dir, 'fonts', 'DejaVuSans.ttf')
+                        
+       # We'll assume the bold font is the same file for simplicity, FPDF can simulate bold.
+       # If you have a specific DejaVuSans-Bold.ttf, you can add it and reference it here.
+       font_bold_path = font_regular_path 
+
+       if not os.path.exists(font_regular_path):
+            raise FileNotFoundError("DejaVuSans.ttf not found in the 'fonts' directory!")
+
+       pdf.add_font("DejaVu", "", font_regular_path)
+       pdf.add_font("DejaVu", "B", font_bold_path)
+       print("Successfully loaded bundled DejaVu Sans font.")
     except Exception as e:
-        print(f"FATAL: Could not find DejaVu Sans font. Please ensure Matplotlib is installed correctly. Error: {e}"); sys.exit(1)
+        print(f"FATAL: Could not load the bundled font file. Error: {e}"); sys.exit(1)
+    # --- [END FONT FIX] ---
 
     for i, ticker in enumerate(['qqq', 'spy', 'sqqq', 'uvix']):
         if i % 2 == 0: pdf.add_page()
